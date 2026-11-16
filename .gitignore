@@ -32,3 +32,6 @@ datasets/*/questions_raw.jsonl
 web/node_modules/
 web/dist/
 *.tsbuildinfo
+
+# Reference material kept local
+rag-implementation-guideline.pdf
