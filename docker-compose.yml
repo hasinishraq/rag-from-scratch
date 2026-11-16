@@ -1,0 +1,18 @@
+# docker compose up --build   ->  http://localhost:8000
+services:
+  rag:
+    build: .
+    image: rag-from-scratch:local
+    # Published on this computer only. The app has no login (ENG-RAG-001 puts access control
+    # out of scope), so do not publish it on a network address without a proxy that adds one.
+    ports:
+      - "127.0.0.1:8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      RAG_CONFIG: configs/default.yaml
+    volumes:
+      # Documents, index, traces, saved keys and the downloaded local models live on the host.
+      - ./data:/app/data
+    restart: unless-stopped

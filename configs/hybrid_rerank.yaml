@@ -1,0 +1,3 @@
+# Ablation run D: C + cross-encoder reranker, no refusal threshold.
+extends: default.yaml
+rerank: {min_score: -1.0e9}

@@ -1,0 +1,3 @@
+# Ablation run C: B + BM25 with RRF.
+extends: default.yaml
+rerank: {enabled: false}

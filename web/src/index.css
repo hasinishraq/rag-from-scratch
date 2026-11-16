@@ -1,0 +1,323 @@
+@import "tailwindcss";
+@import "@fontsource-variable/schibsted-grotesk";
+@import "@fontsource-variable/newsreader";
+@import "@fontsource-variable/doto";
+
+/* Strict black and white. Dark mode is the exact inverse, never a tinted near-black. */
+:root {
+  --paper: #ffffff;
+  --ink: #000000;
+  --graphite: #525252;
+  --rule: #dadada;
+  --wash: #f3f3f3;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --paper: #000000;
+  --ink: #ffffff;
+  --graphite: #a3a3a3;
+  --rule: #333333;
+  --wash: #1a1a1a;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #000000;
+    --ink: #ffffff;
+    --graphite: #a3a3a3;
+    --rule: #333333;
+    --wash: #1a1a1a;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-graphite: var(--graphite);
+  --color-rule: var(--rule);
+  --color-wash: var(--wash);
+  --font-sans: "Schibsted Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader Variable", ui-serif, Georgia, serif;
+  /* Dot-matrix display face: page titles and figures only, echoing the dithered imagery. */
+  --font-dot: "Doto Variable", "Schibsted Grotesk Variable", ui-sans-serif, sans-serif;
+  /* Type scale: a major third (1.25) from a 15px base; display steps for titles. */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.1rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.9375rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.1875rem;
+  --text-lg--line-height: 1.6rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 1.9rem;
+  --text-2xl: 1.875rem;
+  --text-2xl--line-height: 2.25rem;
+  --text-3xl: 2.375rem;
+  --text-3xl--line-height: 2.6rem;
+  --text-display: 3.5rem;
+  --text-display--line-height: 1;
+}
+
+@layer base {
+  html {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-kerning: normal;
+    font-optical-sizing: auto;
+    font-variant-numeric: proportional-nums;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+  code {
+    font-family: inherit;
+    font-weight: 600;
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+  }
+  ::selection {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+/* Answer and passage text: a reading serif, longer leading, measure under 70ch. */
+.prose-read {
+  font-family: var(--font-serif);
+  font-size: 1.1875rem;
+  line-height: 1.7;
+  max-width: 64ch;
+  letter-spacing: 0.002em;
+  hanging-punctuation: first;
+  text-wrap: pretty;
+}
+.prose-read strong {
+  font-weight: 640;
+}
+
+.prose-read em {
+  font-style: italic;
+}
+
+/* The writing position while an answer streams in: a solid ink block, as on a terminal. */
+.stream-caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 0.15em;
+  vertical-align: -0.12em;
+  background: var(--ink);
+  animation: caret 1s steps(2, start) infinite;
+}
+@keyframes caret {
+  to {
+    visibility: hidden;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stream-caret {
+    animation: none;
+  }
+}
+
+/* Buttons. Hover wipes a layer in from the left in steps, like pixels switching on; pressing
+   shrinks the button slightly and thickens the dots. The layer sits between the button's own
+   background and its label (isolation + z-index -1), so the label stays readable. */
+.btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    color 220ms ease,
+    transform 140ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask-size: 8px 8px;
+  mask-size: 8px 8px;
+  image-rendering: pixelated;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 240ms steps(8, end);
+}
+.btn:hover::before {
+  clip-path: inset(0 0 0 0);
+}
+.btn:active {
+  transform: scale(0.96);
+}
+/* Solid and outline swap looks: solid empties to paper with an ink edge, outline fills with
+   ink. The label changes colour with the wipe, so it is never read through a texture. */
+.btn-solid {
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.btn-solid::before {
+  inset: 1px;
+  border-radius: inherit;
+  background: var(--paper);
+}
+.btn-solid:hover {
+  color: var(--ink);
+}
+.btn-outline::before {
+  background: var(--ink);
+}
+/* Ghost: a sparse ink wash. */
+.btn-ghost::before {
+  background: var(--ink);
+  -webkit-mask-image: var(--dots-sparse);
+  mask-image: var(--dots-sparse);
+}
+.btn-ghost:active::before {
+  -webkit-mask-image: var(--dots-light);
+  mask-image: var(--dots-light);
+}
+
+/* Every other button (menu items, list rows, toggles in a group) gives a little under the
+   finger; wide rows move less so they do not appear to jump. */
+:where(button, [role="button"]):not(.btn) {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    transform 140ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+:where(button, [role="button"]):not(.btn):not(:disabled):active {
+  transform: scale(0.985);
+}
+:where([role="radio"], [role="tab"]):not(:disabled):active {
+  transform: scale(0.94);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn::before,
+  :where(button, [role="button"]) {
+    transition: none;
+  }
+  .btn:active,
+  :where(button, [role="button"], [role="radio"]):active {
+    transform: none;
+  }
+}
+
+/* Sidebar menu, pages that are not open: a sparse dot wash wipes in from the left on hover and
+   focus. The wipe moves in steps, so it reads as pixels switching on rather than a smooth fade. */
+.nav-wash {
+  -webkit-mask-size: 8px 8px;
+  mask-size: 8px 8px;
+  image-rendering: pixelated;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 260ms steps(10, end);
+}
+.nav-item:hover .nav-wash,
+.nav-item:focus-visible .nav-wash {
+  clip-path: inset(0 0 0 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-wash {
+    transition: none;
+  }
+}
+
+/* Keyboard users can jump past the navigation. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 60;
+  border-radius: 0.5rem;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.5rem 0.9rem;
+  font-weight: 600;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Dot-matrix figures and titles. Tabular so counting numbers do not jitter. */
+.dot {
+  font-family: var(--font-dot);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+.page-title {
+  font-family: var(--font-dot);
+  font-size: var(--text-display);
+  line-height: 0.95;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+@media (max-width: 640px) {
+  .page-title {
+    font-size: 2.6rem;
+  }
+}
+
+/* Uncited relevance: an ink fill seen through a Bayer dot mask, so it inverts with the theme. */
+.dither-fill {
+  -webkit-mask-size: 8px 8px;
+  mask-size: 8px 8px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  image-rendering: pixelated;
+}
+
+/* Magic UI-style shimmer, monochrome: used only while sources are being read. */
+.shimmer-text {
+  background: linear-gradient(
+    100deg,
+    var(--graphite) 35%,
+    var(--ink) 50%,
+    var(--graphite) 65%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 1.8s linear infinite;
+}
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -150% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-text {
+    animation: none;
+    color: var(--graphite);
+    background: none;
+  }
+}

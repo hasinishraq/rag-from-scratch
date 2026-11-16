@@ -1,0 +1,31 @@
+# "Start from" presets for the Add-provider form (Models page). Values are the reported free-tier
+# figures from ENG-RAG-001 §4.1 (November 2026). Check each against the provider's own page; they
+# change often. Model ids are left for the user to copy from the provider console.
+presets:
+  - label: Groq
+    name: groq
+    base_url: https://api.groq.com/openai/v1
+    api_key_env: GROQ_API_KEY
+    limits: {rpm: 30, rpd: 1000, tpd: 200000, tpm: 8000}
+  - label: Google Gemini
+    name: gemini
+    base_url: https://generativelanguage.googleapis.com/v1beta/openai
+    api_key_env: GEMINI_API_KEY
+    limits: {rpm: 15, rpd: 500, tpm: 250000}
+  - label: OpenRouter
+    name: openrouter
+    base_url: https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+    limits: {rpm: 20, rpd: 50}
+    note: Use a model id that ends in ":free".
+  - label: Cloudflare Workers AI
+    name: cloudflare
+    base_url: https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/ai/v1
+    api_key_env: CLOUDFLARE_API_TOKEN
+    limits: {}
+    note: Quota is 10,000 neurons per day, not requests. Replace <ACCOUNT_ID>.
+  - label: Custom (OpenAI-compatible)
+    name: ""
+    base_url: ""
+    api_key_env: ""
+    limits: {}

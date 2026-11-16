@@ -1,0 +1,2 @@
+{"id": "q001", "question": "How long do refunds take?", "gold_chunk_ids": ["d_0123456789_0001"], "reference_answer": "Within 14 days of approval.", "answerable": true, "type": "factual", "split": "dev"}
+{"id": "q002", "question": "Who founded the company?", "gold_chunk_ids": [], "reference_answer": "", "answerable": false, "type": "unanswerable", "split": "test"}

@@ -1,0 +1,34 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Environment files (keep the template)
+.env
+.env.*
+!.env.example
+
+# Markdown: only README.md is tracked
+*.md
+!README.md
+# Test fixtures are needed for `make test` on a clean clone
+!tests/fixtures/**/*.md
+
+# Docs folder
+/docs/
+
+# Data and generated output
+data/store*/
+data/docs/
+evals/results/
+*.tmp
+datasets/*/pdfs/
+datasets/*/store/
+datasets/*/questions_raw.jsonl
+
+# Web frontend
+web/node_modules/
+web/dist/
+*.tsbuildinfo

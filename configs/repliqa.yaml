@@ -1,0 +1,5 @@
+# RepliQA demo/evaluation corpus (fictional documents, CC BY 4.0), fetched by
+# scripts/fetch_repliqa.py. Its own folder and index; your data/docs corpus is not touched.
+extends: default.yaml
+corpus_dir: datasets/repliqa/pdfs
+store_dir: datasets/repliqa/store

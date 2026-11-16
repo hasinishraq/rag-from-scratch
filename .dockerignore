@@ -1,0 +1,19 @@
+# Keep secrets, data and local caches out of the build context and the image.
+.env
+.env.*
+!.env.example
+.git
+.venv
+.pytest_cache
+.ruff_cache
+**/__pycache__
+data
+datasets
+evals/results
+tests
+docs
+rag-wireframes
+*.pdf
+web/node_modules
+web/dist
+web/tsconfig.tsbuildinfo

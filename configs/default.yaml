@@ -1,0 +1,92 @@
+# Run E of the ablation plan (ENG-RAG-001 §8.4): structure-aware chunks, hybrid, reranker, threshold.
+corpus_dir: data/docs
+store_dir: data/store
+# tiktoken encoding used to measure chunks and budgets; "simple" is the offline fallback.
+tokenizer: cl100k_base
+
+chunking:
+  strategy: structure        # structure | fixed
+  chunk_tokens: 350
+  overlap_tokens: 50
+  add_context_header: true
+
+embedding:
+  backend: local             # local | ollama (FR-20; switching forces a full re-index)
+  # Not named by the design; chosen as a small CPU model (C3). Confirm or change.
+  model: BAAI/bge-small-en-v1.5
+  query_prefix: "Represent this sentence for searching relevant passages: "
+  passage_prefix: ""
+  batch_size: 32
+  ollama_model: ""           # used only when backend is ollama
+
+retrieval:
+  k_retrieve: 30
+  rrf_k: 60
+  use_bm25: true
+  bm25_k1: 1.5
+  bm25_b: 0.75
+
+rerank:
+  enabled: true
+  # Not named by the design; chosen as a small CPU cross-encoder (C3). Confirm or change.
+  model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  k_rerank: 30
+  k_context: 6
+  min_score: 0.2
+  min_source_score: 0.02     # passages below this are not sent (provisional, see decision 0002)
+
+generation:
+  trim_overlap: true         # do not send the overlap shared by consecutive passages twice
+  max_context_tokens: 2200
+  max_output_tokens: 400
+  temperature: 0.1
+  refusal_text: "The documents do not contain the answer to this question."
+
+limits:
+  max_question_chars: 2000
+  max_file_mb: 50
+  max_concurrent_queries: 4  # more at once are refused with 429 "busy"
+
+tracing:
+  retention_days: 90         # older traces are deleted when the app starts
+  max_rows: 20000            # and only the newest this many are kept
+
+healthcheck:
+  hosted_timeout_s: 10
+  local_timeout_s: 120
+  reply_max_tokens: 8
+
+llm:
+  cache: true
+  mode: auto                 # auto | free_api_only | ollama_only
+  request_timeout_s: 60
+  max_attempts: 3
+  backoff_base_s: 1.0
+  max_wait_s: 20             # longest the gateway waits for a per-minute window before falling back
+  routing:
+    strategy: ordered        # ordered | fastest (changeable on the Models page)
+    failure_threshold: 3     # consecutive failures before a provider is paused (circuit breaker)
+    pause_s: 60              # how long a failing provider is skipped before it is tried again
+    ewma_alpha: 0.3          # weight of the newest latency in the moving average
+  providers:                 # seed values; edited afterwards in the Models page; tried in this order
+    - name: groq
+      kind: openai_compatible
+      free: true
+      base_url: https://api.groq.com/openai/v1
+      api_key_env: GROQ_API_KEY
+      model: openai/gpt-oss-120b   # verified 2026-11-15 against Groq /models
+      limits: {rpm: 30, rpd: 1000, tpm: 8000, tpd: 200000}
+    - name: gemini
+      kind: openai_compatible
+      free: true
+      base_url: https://generativelanguage.googleapis.com/v1beta/openai
+      api_key_env: GEMINI_API_KEY
+      model: gemini-3.5-flash-lite
+      limits: {rpm: 15, rpd: 500, tpm: 250000}
+    - name: ollama
+      kind: ollama
+      free: true
+      enabled: false         # off until a local server and model are set up in the Models page
+      base_url: http://localhost:11434
+      model: ""              # chosen in the Models page from the installed list
+      limits: {}

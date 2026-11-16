@@ -1,0 +1,6 @@
+# Ablation run A: dense only, fixed-size chunks, no context header, no reranker.
+extends: default.yaml
+store_dir: data/store_ablation_a
+chunking: {strategy: fixed, add_context_header: false}
+retrieval: {use_bm25: false}
+rerank: {enabled: false}

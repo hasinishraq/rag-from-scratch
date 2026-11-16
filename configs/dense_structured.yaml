@@ -1,0 +1,5 @@
+# Ablation run B: A + structure-aware chunks with context header.
+extends: default.yaml
+store_dir: data/store_ablation_b
+retrieval: {use_bm25: false}
+rerank: {enabled: false}
